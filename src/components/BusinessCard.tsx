@@ -62,13 +62,13 @@ export const BusinessCard = ({
 
   if (!business.isUnlocked) {
     return (
-      <div className="business-card p-4 rounded-lg opacity-50">
+      <div className="glass p-6 rounded-xl opacity-60 border-2 border-dashed border-muted">
         <div className="flex items-center space-x-4">
-          <div className="text-4xl opacity-50">{business.icon}</div>
+          <div className="text-5xl opacity-30 grayscale">{business.icon}</div>
           <div className="flex-1">
-            <h3 className="font-semibold text-muted-foreground">???</h3>
-            <p className="text-sm text-muted-foreground">
-              Unlock at {formatMoney(business.unlockCondition)} total earned
+            <h3 className="font-bold text-xl text-muted-foreground">???</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              🔒 Unlock at {formatMoney(business.unlockCondition)} total earned
             </p>
           </div>
         </div>
@@ -77,20 +77,22 @@ export const BusinessCard = ({
   }
 
   return (
-    <div className="business-card p-4 rounded-lg animate-slide-up">
+    <div className="card-3d glass-dark p-6 rounded-xl hover-lift border border-white/10 animate-slide-up">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
-          <div className="text-4xl">{business.icon}</div>
+          <div className="text-5xl animate-float" style={{ animationDelay: `${Math.random() * 2}s` }}>
+            {business.icon}
+          </div>
           <div>
-            <h3 className="font-semibold text-foreground">{business.name}</h3>
+            <h3 className="font-bold text-xl gradient-text">{business.name}</h3>
             <p className="text-sm text-muted-foreground">{business.description}</p>
-            <div className="flex items-center space-x-2 mt-1">
-              <span className="text-xs text-muted-foreground">Owned:</span>
-              <span className="text-sm font-medium text-secondary">
+            <div className="flex items-center space-x-3 mt-2">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Owned:</span>
+              <span className="text-lg font-bold text-green-400 neon-text">
                 {business.owned}
               </span>
               {business.isAutomatic && (
-                <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">
+                <span className="text-xs bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1 rounded-full font-bold animate-pulse">
                   AUTO
                 </span>
               )}
@@ -98,11 +100,12 @@ export const BusinessCard = ({
           </div>
         </div>
         
-        <div className="text-right">
-          <div className="text-sm text-muted-foreground">Revenue</div>
-          <div className="text-lg font-semibold text-secondary">
-            {formatMoney(revenue)}/cycle
+        <div className="text-right glass p-3 rounded-lg">
+          <div className="text-xs text-muted-foreground uppercase tracking-wider">Revenue</div>
+          <div className="text-2xl font-bold holographic">
+            {formatMoney(revenue)}
           </div>
+          <div className="text-xs text-muted-foreground">/cycle</div>
         </div>
       </div>
 
@@ -112,10 +115,13 @@ export const BusinessCard = ({
             onClick={handleCollectClick}
             variant="collect"
             size="xl"
-            className={`w-full ${isCollecting ? 'animate-tap-effect' : ''}`}
+            className={`w-full glow-button bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg py-6 ${isCollecting ? 'animate-tap-effect success-animation' : ''}`}
             disabled={isCollecting}
           >
-            💰 Collect {formatMoney(revenue)}
+            <span className="flex items-center justify-center gap-2">
+              <span className="text-2xl">💰</span>
+              <span>Collect {formatMoney(revenue)}</span>
+            </span>
           </Button>
         </div>
       )}

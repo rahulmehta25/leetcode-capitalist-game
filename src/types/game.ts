@@ -39,6 +39,9 @@ export interface GameState {
   solvedProblems: string[]; // All solved problem IDs
   problemStreak: number; // Current daily streak
   lastProblemDate?: string; // Last date a problem was solved
+  achievements?: string[]; // Unlocked achievement IDs
+  perfectSolutions?: number; // Count of problems solved without hints
+  globalMultiplier?: number; // Achievement-based global multiplier
 }
 
 export interface FloatingMoney {

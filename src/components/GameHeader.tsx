@@ -7,40 +7,45 @@ interface GameHeaderProps {
 
 export const GameHeader = ({ gameState, formatMoney }: GameHeaderProps) => {
   return (
-    <header className="sticky top-0 z-10 bg-gradient-card border-b border-border p-4">
+    <header className="sticky top-0 z-40 glass-dark border-b border-white/10 p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Code Capital Academy 💻
-          </h1>
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <div className="text-sm text-muted-foreground">Developer Level</div>
-              <div className="text-lg font-semibold text-accent">
-                {gameState.level}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl animate-float">💻</span>
+            <h1 className="text-2xl font-black gradient-text">
+              Code Capital Academy
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="glass p-2 rounded-lg">
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">Level</div>
+                  <div className="text-xl font-bold text-yellow-400 neon-text">
+                    {gameState.level}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-muted-foreground">Experience (XP)</div>
-              <div className="text-lg font-semibold text-accent">
-                {gameState.xp}
+            <div className="glass p-2 rounded-lg">
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">XP</div>
+                  <div className="text-xl font-bold text-blue-400 neon-text">
+                    {gameState.xp}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-money p-4 rounded-lg">
-            <div className="text-sm text-secondary-foreground opacity-90">Current Money</div>
-            <div className="text-2xl font-bold text-secondary-foreground money-counter">
-              {formatMoney(gameState.money)}
-            </div>
-          </div>
-          
-          <div className="bg-gradient-primary p-4 rounded-lg">
-            <div className="text-sm text-primary-foreground opacity-90">Total Earned</div>
-            <div className="text-2xl font-bold text-primary-foreground">
-              {formatMoney(gameState.totalEarned)}
+            <div className="glass p-2 rounded-lg">
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">Solved</div>
+                  <div className="text-xl font-bold text-purple-400 neon-text">
+                    {gameState.solvedProblems.length}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

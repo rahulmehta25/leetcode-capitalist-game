@@ -243,6 +243,17 @@ export const useGameState = () => {
   const calculateLevelProgress = (): number => {
     return (gameState.xp % 100) / 100;
   };
+  
+  const applyAchievementRewards = useCallback((rewards: { xp?: number; money?: number; multiplier?: number }) => {
+    setGameState(current => ({
+      ...current,
+      xp: current.xp + (rewards.xp || 0),
+      level: Math.floor((current.xp + (rewards.xp || 0)) / 100) + 1,
+      money: current.money + (rewards.money || 0),
+      totalEarned: current.totalEarned + (rewards.money || 0),
+      globalMultiplier: (current.globalMultiplier || 1) * (rewards.multiplier || 1),
+    }));
+  }, []);
 
   return {
     gameState,
@@ -255,5 +266,6 @@ export const useGameState = () => {
     formatMoney,
     handleProblemSolved,
     calculateLevelProgress,
+    applyAchievementRewards,
   };
 };

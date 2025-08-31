@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameState } from '../hooks/useGameState';
+import { useAchievements } from '../hooks/useAchievements';
 import { GameHeader } from './GameHeader';
 import { BusinessCard } from './BusinessCard';
 import { FloatingMoney } from './FloatingMoney';
 import { ProblemModal } from './ProblemModal';
+import { AchievementNotification } from './AchievementNotification';
+import { AchievementsModal } from './AchievementsModal';
 import { CodingProblem } from '../types/leetcode';
 import { LEETCODE_PROBLEMS } from '../data/leetcodeProblems';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Code2, Trophy, Zap } from 'lucide-react';
+import { Code2, Trophy, Zap, Award } from 'lucide-react';
 
 export const Game = () => {
   const {
@@ -22,10 +25,36 @@ export const Game = () => {
     formatMoney,
     handleProblemSolved,
     calculateLevelProgress,
+    applyAchievementRewards,
   } = useGameState();
+  
+  const {
+    achievements,
+    newlyUnlocked,
+    progress,
+    clearNotification,
+    getUnlockedCount,
+    getTotalCount,
+    getActiveTitle,
+  } = useAchievements(gameState);
   
   const [selectedProblem, setSelectedProblem] = useState<CodingProblem | null>(null);
   const [isProblemModalOpen, setIsProblemModalOpen] = useState(false);
+  const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  
+  // Listen for achievement rewards
+  useEffect(() => {
+    const handleAchievementRewards = (event: CustomEvent) => {
+      if (event.detail) {
+        applyAchievementRewards(event.detail);
+      }
+    };
+    
+    window.addEventListener('achievementUnlocked', handleAchievementRewards as EventListener);
+    return () => {
+      window.removeEventListener('achievementUnlocked', handleAchievementRewards as EventListener);
+    };
+  }, [applyAchievementRewards]);
   
   const getAvailableProblems = (domain: string): CodingProblem[] => {
     return LEETCODE_PROBLEMS.filter(
@@ -42,45 +71,115 @@ export const Game = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 cyber-grid opacity-20" />
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-green-900/20" 
+           style={{
+             backgroundSize: '400% 400%',
+             animation: 'gradient-shift 15s ease infinite'
+           }} />
+      
+      {/* Floating Particles */}
+      <div className="fixed inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="particle absolute w-1 h-1 bg-blue-400 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 15}s`,
+              animationDuration: `${15 + Math.random() * 10}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating Balance Overlay */}
+      <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl blur-xl opacity-50 animate-pulse group-hover:opacity-70 transition-opacity" />
+          <div className="relative glass-dark p-4 rounded-2xl border border-green-500/30 neon-border min-w-[280px] hover:scale-105 transition-transform cursor-default">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl animate-float">💰</div>
+              <div className="flex-1">
+                <div className="text-xs text-white/60 uppercase tracking-wider font-semibold">Current Balance</div>
+                <div className="text-2xl font-black text-white holographic money-counter">
+                  {formatMoney(gameState.money)}
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-white/10 space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-white/50">Total Earned</span>
+                <span className="text-white/80 font-semibold">{formatMoney(gameState.totalEarned)}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-white/50">Level</span>
+                <span className="text-yellow-400 font-semibold">Lvl {gameState.level}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-white/50">Achievements</span>
+                <span className="text-purple-400 font-semibold">{getUnlockedCount()}/{getTotalCount()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Achievements Button */}
+      <div className="fixed top-20 right-6 z-40">
+        <Button
+          onClick={() => setIsAchievementsModalOpen(true)}
+          variant="outline"
+          className="glass-dark border-purple-500/30 hover:border-purple-500/50 hover:scale-105 transition-all"
+        >
+          <Award className="w-5 h-5 mr-2 text-purple-400" />
+          <span className="font-semibold">Achievements</span>
+          <Badge className="ml-2 bg-purple-500/20 text-purple-400">
+            {getUnlockedCount()}/{getTotalCount()}
+          </Badge>
+        </Button>
+      </div>
+
       <GameHeader gameState={gameState} formatMoney={formatMoney} />
       
-      <main className="max-w-4xl mx-auto p-4 space-y-4">
-        <div className="text-center mb-6">
+      <main className="max-w-4xl mx-auto p-4 space-y-4 relative z-10">
+        <div className="text-center mb-6 glass-dark rounded-2xl p-8 animate-slide-up">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Code2 className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold">Code Capital Academy</h2>
+            <Code2 className="w-8 h-8 text-primary animate-float" />
+            <h2 className="text-3xl font-bold gradient-text">Code Capital Academy</h2>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-lg">
             Master programming concepts by solving LeetCode problems and earn rewards!
           </p>
-          <div className="flex justify-center gap-4 mt-4">
-            <Badge variant="outline" className="px-3 py-1">
-              <Trophy className="w-4 h-4 mr-1" />
-              Level {gameState.level}
+          <div className="flex flex-wrap justify-center gap-3 mt-6">
+            <Badge className="px-4 py-2 neon-border bg-gradient-to-r from-blue-600/20 to-purple-600/20">
+              <Trophy className="w-5 h-5 mr-2 text-yellow-400" />
+              <span className="font-bold">Level {gameState.level}</span>
             </Badge>
-            <Badge variant="outline" className="px-3 py-1">
-              <Zap className="w-4 h-4 mr-1" />
-              {gameState.xp} XP
+            <Badge className="px-4 py-2 neon-border bg-gradient-to-r from-green-600/20 to-blue-600/20">
+              <Zap className="w-5 h-5 mr-2 text-yellow-300 animate-pulse" />
+              <span className="font-bold">{gameState.xp} XP</span>
             </Badge>
-            <Badge variant="outline" className="px-3 py-1">
-              Problems Solved: {gameState.solvedProblems.length}
+            <Badge className="px-4 py-2 hover-lift bg-gradient-to-r from-purple-600/20 to-pink-600/20">
+              <span className="font-semibold">Problems Solved: {gameState.solvedProblems.length}</span>
             </Badge>
             {gameState.problemStreak > 0 && (
-              <Badge className="px-3 py-1 bg-orange-500">
-                {gameState.problemStreak} Day Streak!
+              <Badge className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 animate-pulse-glow">
+                <span className="font-bold text-white">{gameState.problemStreak} Day Streak! 🔥</span>
               </Badge>
             )}
           </div>
-          <div className="w-full max-w-md mx-auto mt-2">
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div className="w-full max-w-md mx-auto mt-6">
+            <div className="h-3 bg-black/40 rounded-full overflow-hidden backdrop-blur-sm">
               <div 
-                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all"
+                className="h-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 transition-all shimmer"
                 style={{ width: `${calculateLevelProgress() * 100}%` }}
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {(calculateLevelProgress() * 100).toFixed(0)}% to Level {gameState.level + 1}
+            <p className="text-sm text-muted-foreground mt-2 font-medium">
+              <span className="holographic">{(calculateLevelProgress() * 100).toFixed(0)}%</span> to Level {gameState.level + 1}
             </p>
           </div>
         </div>
@@ -165,6 +264,18 @@ export const Game = () => {
           setIsProblemModalOpen(false);
           setSelectedProblem(null);
         }}
+      />
+      
+      <AchievementsModal
+        isOpen={isAchievementsModalOpen}
+        onClose={() => setIsAchievementsModalOpen(false)}
+        achievements={achievements}
+        progress={progress}
+      />
+      
+      <AchievementNotification
+        achievement={newlyUnlocked}
+        onClose={clearNotification}
       />
     </div>
   );
