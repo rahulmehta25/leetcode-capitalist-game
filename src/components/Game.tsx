@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useGameState } from '../hooks/useGameState';
 import { useAchievements } from '../hooks/useAchievements';
+import { useDailyChallenge } from '../hooks/useDailyChallenge';
 import { GameHeader } from './GameHeader';
 import { BusinessCard } from './BusinessCard';
 import { FloatingMoney } from './FloatingMoney';
 import { ProblemModal } from './ProblemModal';
 import { AchievementNotification } from './AchievementNotification';
 import { AchievementsModal } from './AchievementsModal';
+import { DailyChallengeCard } from './DailyChallengeCard';
 import { CodingProblem } from '../types/leetcode';
 import { LEETCODE_PROBLEMS } from '../data/leetcodeProblems';
 import { Button } from './ui/button';
@@ -38,9 +40,21 @@ export const Game = () => {
     getActiveTitle,
   } = useAchievements(gameState);
   
+  const {
+    todayChallenge,
+    progress: challengeProgress,
+    timeRemaining,
+    startChallenge,
+    completeProblem,
+    getChallengeProblems,
+    getDailyChallengeStreak,
+    formatTime,
+  } = useDailyChallenge();
+  
   const [selectedProblem, setSelectedProblem] = useState<CodingProblem | null>(null);
   const [isProblemModalOpen, setIsProblemModalOpen] = useState(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [isDailyChallenge, setIsDailyChallenge] = useState(false);
   
   // Listen for achievement rewards
   useEffect(() => {
@@ -67,7 +81,14 @@ export const Game = () => {
     if (problems.length > 0) {
       setSelectedProblem(problems[0]);
       setIsProblemModalOpen(true);
+      setIsDailyChallenge(false);
     }
+  };
+  
+  const handleDailyChallengeProblem = (problem: CodingProblem) => {
+    setSelectedProblem(problem);
+    setIsProblemModalOpen(true);
+    setIsDailyChallenge(true);
   };
 
   return (
@@ -183,6 +204,20 @@ export const Game = () => {
             </p>
           </div>
         </div>
+        
+        {/* Daily Challenge Card */}
+        {todayChallenge && (
+          <DailyChallengeCard
+            challenge={todayChallenge}
+            progress={challengeProgress}
+            problems={getChallengeProblems()}
+            timeRemaining={timeRemaining}
+            streak={getDailyChallengeStreak()}
+            onStart={startChallenge}
+            onSelectProblem={handleDailyChallengeProblem}
+            formatTime={formatTime}
+          />
+        )}
 
         <div className="space-y-4">
           {gameState.businesses.map((business) => {
@@ -259,10 +294,14 @@ export const Game = () => {
           setIsProblemModalOpen(false);
           setSelectedProblem(null);
         }}
-        onSolve={(problemId, xp, money) => {
+        onSolve={(problemId, xp, money, hintsUsed = 0) => {
           handleProblemSolved(problemId, xp, money);
+          if (isDailyChallenge) {
+            completeProblem(problemId, hintsUsed);
+          }
           setIsProblemModalOpen(false);
           setSelectedProblem(null);
+          setIsDailyChallenge(false);
         }}
       />
       

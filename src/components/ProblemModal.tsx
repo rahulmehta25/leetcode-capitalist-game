@@ -16,7 +16,7 @@ interface ProblemModalProps {
   problem: CodingProblem | null;
   isOpen: boolean;
   onClose: () => void;
-  onSolve: (problemId: string, earnedXP: number, earnedMoney: number) => void;
+  onSolve: (problemId: string, earnedXP: number, earnedMoney: number, hintsUsed?: number) => void;
 }
 
 type LearningStage = 'multiple-choice' | 'fill-blank' | 'coding';
@@ -153,7 +153,7 @@ export const ProblemModal = ({ problem, isOpen, onClose, onSolve }: ProblemModal
           );
           
           setTimeout(() => {
-            onSolve(problem.id, finalXP, finalMoney);
+            onSolve(problem.id, finalXP, finalMoney, hintsUsed);
             onClose();
           }, 2000);
         }
