@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Rahul's Capital Design System - Business Empire Theme
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Base Colors */
+    --background: 220 20% 8%;
+    --foreground: 210 15% 95%;
+
+    /* Business Card Styling */
+    --card: 220 15% 12%;
+    --card-foreground: 210 15% 95%;
+
+    /* Popover Styling */
+    --popover: 220 15% 12%;
+    --popover-foreground: 210 15% 95%;
+
+    /* Primary Business Blue */
+    --primary: 220 85% 55%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Money Green Theme */
+    --secondary: 142 70% 45%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Muted Elements */
+    --muted: 220 10% 20%;
+    --muted-foreground: 215 10% 65%;
+
+    /* Gold Accent for Premium */
+    --accent: 45 90% 60%;
+    --accent-foreground: 220 20% 8%;
+
+    /* Error States */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Borders and Inputs */
+    --border: 220 10% 25%;
+    --input: 220 10% 20%;
+    --ring: 220 85% 55%;
+
+    /* Design System Extensions */
+    --success: 142 70% 45%;
+    --warning: 45 90% 60%;
+    --info: 220 85% 55%;
+    
+    /* Business Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 85% 55%), hsl(220 85% 65%));
+    --gradient-money: linear-gradient(135deg, hsl(142 70% 45%), hsl(142 70% 55%));
+    --gradient-premium: linear-gradient(135deg, hsl(45 90% 60%), hsl(45 90% 70%));
+    --gradient-card: linear-gradient(135deg, hsl(220 15% 12%), hsl(220 15% 16%));
+    
+    /* Shadows */
+    --shadow-business: 0 4px 20px hsl(220 85% 55% / 0.2);
+    --shadow-money: 0 4px 20px hsl(142 70% 45% / 0.2);
+    --shadow-premium: 0 4px 20px hsl(45 90% 60% / 0.2);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .light {
+    /* Light theme overrides for business hours */
+    --background: 210 15% 95%;
+    --foreground: 220 20% 8%;
+    --card: 210 15% 98%;
+    --card-foreground: 220 20% 8%;
+    --border: 220 10% 85%;
+    --input: 210 15% 92%;
+    --muted: 210 15% 90%;
+    --muted-foreground: 220 10% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  
+  /* Custom Business Animations */
+  .money-counter {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .business-card {
+    @apply transition-all duration-300 ease-out hover:scale-[1.02];
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-business);
+  }
+  
+  .money-button {
+    @apply transition-all duration-200 ease-out active:scale-95;
+    background: var(--gradient-money);
+    box-shadow: var(--shadow-money);
+  }
+  
+  .premium-button {
+    @apply transition-all duration-200 ease-out hover:scale-105;
+    background: var(--gradient-premium);
+    box-shadow: var(--shadow-premium);
+  }
+  
+  /* Progress Bar Animations */
+  .progress-bar {
+    @apply transition-all duration-500 ease-out;
+  }
+  
+  /* Tap Effect Animation */
+  @keyframes tap-effect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  .tap-effect {
+    animation: tap-effect 0.2s ease-out;
+  }
+  
+  /* Money Float Animation */
+  @keyframes money-float {
+    0% { 
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% { 
+      opacity: 0;
+      transform: translateY(-40px) scale(1.2);
+    }
+  }
+  
+  .money-float {
+    animation: money-float 1s ease-out forwards;
+  }
+  
+  /* Counter Animation */
+  @keyframes counter-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  .counter-pulse {
+    animation: counter-pulse 0.3s ease-out;
+  }
+}

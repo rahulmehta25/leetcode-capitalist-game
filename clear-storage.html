@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage</title>
+</head>
+<body>
+    <h1>Clear Local Storage</h1>
+    <button onclick="clearStorage()">Clear Storage and Reload</button>
+    <script>
+        function clearStorage() {
+            localStorage.removeItem('rahuls-capital-save');
+            alert('Storage cleared! Reload the game.');
+            window.location.href = 'http://localhost:8080';
+        }
+    </script>
+</body>
+</html>
